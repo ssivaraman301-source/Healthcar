@@ -1,0 +1,1564 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Healthcare AI Assistant</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 90% 80%, rgba(0, 180, 220, 0.20), transparent 25%),
+                radial-gradient(circle at 10% 10%, rgba(0, 150, 140, 0.15), transparent 25%),
+                #061c1d;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* =========================
+           MAIN APP
+        ========================= */
+
+        .app {
+            width: 96%;
+            height: 92vh;
+            margin: 4vh auto;
+            display: flex;
+            overflow: hidden;
+
+            background: rgba(40, 57, 59, 0.92);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.35),
+                inset 0 0 30px rgba(255,255,255,0.02);
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 375px;
+            min-width: 375px;
+            padding: 25px 30px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(5, 50, 50, 0.95),
+                    rgba(7, 34, 39, 0.95)
+                );
+
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #08b6bd,
+                #087c9e
+            );
+
+            font-size: 23px;
+
+            box-shadow: 0 8px 20px rgba(0,180,200,0.2);
+        }
+
+        .brand h2 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            margin-top: 3px;
+            font-size: 12px;
+            color: #9fb7b8;
+        }
+
+        /* Safety card */
+
+        .safety-card {
+            padding: 22px;
+
+            border-radius: 22px;
+
+            background: rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            margin-bottom: 25px;
+        }
+
+        .safety-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .safety-card p {
+            color: #9eb4b5;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        /* Topics */
+
+        .topics-title {
+            font-size: 13px;
+            color: #89a4a5;
+            margin-bottom: 12px;
+        }
+
+        .topic {
+            padding: 13px 15px;
+            margin-bottom: 9px;
+
+            border-radius: 13px;
+
+            cursor: pointer;
+
+            background: rgba(255,255,255,0.025);
+
+            border: 1px solid transparent;
+
+            color: #d6e4e4;
+
+            transition: 0.25s;
+        }
+
+        .topic:hover {
+            background: rgba(0,180,190,0.10);
+            border-color: rgba(0,200,210,0.20);
+            transform: translateX(3px);
+        }
+
+        /* =========================
+           CHAT AREA
+        ========================= */
+
+        .chat-section {
+            flex: 1;
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            position: relative;
+        }
+
+        /* Header */
+
+        .chat-header {
+            height: 72px;
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+
+            position: relative;
+        }
+
+        .status {
+            padding: 7px 15px;
+
+            border-radius: 20px;
+
+            background: rgba(70, 150, 150, 0.15);
+
+            color: #9fb7b8;
+
+            font-size: 12px;
+        }
+
+        .status-dot {
+            display: inline-block;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #25d9bd;
+
+            margin-right: 6px;
+
+            box-shadow: 0 0 10px #25d9bd;
+        }
+
+        /* =========================
+           MESSAGESc
+        ========================= */
+
+        .messages {
+            flex: 1;
+
+            overflow-y: auto;
+
+            padding: 30px 35px 20px;
+
+            scroll-behavior: smooth;
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.12);
+            border-radius: 10px;
+        }
+
+        /* User message */
+
+        .message-row.user {
+            display: flex;
+            justify-content: flex-end;
+
+            margin-bottom: 25px;
+        }
+
+        .user-message {
+            max-width: 55%;
+
+            padding: 15px 20px;
+
+            border-radius: 22px 22px 5px 22px;
+
+            background: linear-gradient(
+                135deg,
+                #0db2aa,
+                #087fa1
+            );
+
+            color: white;
+
+            line-height: 1.55;
+
+            box-shadow:
+                0 10px 25px rgba(0,130,150,0.15);
+        }
+
+        /* Bot row */
+
+        .message-row.bot {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            margin-bottom: 28px;
+        }
+
+        .bot-avatar {
+            width: 45px;
+            height: 45px;
+
+            min-width: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #08b8bc,
+                #087f9c
+            );
+
+            font-size: 22px;
+
+            box-shadow:
+                0 8px 20px rgba(0,170,190,0.20);
+        }
+
+        .bot-content {
+            max-width: 78%;
+        }
+
+        .bot-message {
+            padding: 17px 22px;
+
+            background: rgba(3, 25, 27, 0.88);
+
+            border-radius: 5px 22px 22px 22px;
+
+            line-height: 1.65;
+
+            color: #e1eeee;
+
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Source label */
+
+        .source {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            margin-top: 9px;
+
+            padding: 7px 12px;
+
+            border-radius: 15px;
+
+            background: rgba(50,150,145,0.12);
+
+            color: #91aaaa;
+
+            font-size: 11px;
+        }
+
+        .source button {
+            border: none;
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           TYPING
+        ========================= */
+
+        .typing {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .typing span {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #54c8c5;
+
+            animation: typing 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: .4;
+            }
+
+            30% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+
+        /* =========================
+           INPUT AREA
+        ========================= */
+
+        .input-area {
+            padding: 15px 30px 22px;
+
+            background: rgba(30, 48, 50, 0.95);
+
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 7px 8px 7px 20px;
+
+            border-radius: 30px;
+
+            background: #0b282a;
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            transition: .25s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: rgba(0,200,200,0.45);
+
+            box-shadow:
+                0 0 20px rgba(0,180,190,0.08);
+        }
+
+        #userInput {
+            flex: 1;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: white;
+
+            font-size: 15px;
+
+            padding: 12px 0;
+        }
+
+        #userInput::placeholder {
+            color: #718b8d;
+        }
+
+        #sendButton {
+            width: 46px;
+            height: 46px;
+
+            min-width: 46px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            background: linear-gradient(
+                135deg,
+                #0db8b3,
+                #087fa0
+            );
+
+            color: white;
+
+            font-size: 19px;
+
+            transition: .2s;
+        }
+
+        #sendButton:hover {
+            transform: scale(1.07);
+        }
+
+        #sendButton:active {
+            transform: scale(.95);
+        }
+
+        #sendButton:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .input-hint {
+            text-align: center;
+
+            margin-top: 8px;
+
+            font-size: 10px;
+
+            color: #718889;
+        }
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+            text-align: center;
+
+            padding: 60px 20px;
+        }
+
+        .welcome-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .welcome h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #9eb4b5;
+            font-size: 14px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            body {
+                overflow: auto;
+            }
+
+            .app {
+                width: 100%;
+                height: 100vh;
+
+                margin: 0;
+
+                border-radius: 0;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .chat-header {
+                height: 60px;
+                min-height: 60px;
+            }
+
+            .messages {
+                padding: 20px 15px;
+            }
+
+            .user-message {
+                max-width: 80%;
+            }
+
+            .bot-content {
+                max-width: calc(100% - 55px);
+            }
+
+            .input-area {
+                padding: 10px 12px 15px;
+            }
+        }
+    
+        /* =========================
+           ACCOUNT + THEME CONTROLS
+        ========================= */
+
+        .sidebar {
+            position: relative;
+            padding-bottom: 155px;
+        }
+
+        .account-panel {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 18px;
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.045);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .account-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            margin-bottom: 10px;
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #08b8bc, #087f9c);
+            box-shadow: 0 7px 18px rgba(0,170,190,0.18);
+            font-size: 18px;
+        }
+
+        .account-info {
+            min-width: 0;
+        }
+
+        .account-name {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .account-email {
+            margin-top: 3px;
+            color: #8ea8aa;
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .account-label {
+            display: inline-block;
+            margin-top: 3px;
+            padding: 2px 7px;
+            border-radius: 8px;
+            background: rgba(0,190,190,0.10);
+            color: #72d7d3;
+            font-size: 9px;
+        }
+
+        .account-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+        }
+
+        .account-btn {
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 11px;
+            padding: 9px 7px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.035);
+            color: #d8e7e7;
+            font-size: 11px;
+            transition: .2s;
+        }
+
+        .account-btn:hover {
+            background: rgba(0,190,195,0.12);
+            border-color: rgba(0,200,210,0.22);
+            transform: translateY(-1px);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,75,75,0.12);
+            border-color: rgba(255,100,100,0.22);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .toggle-track {
+            width: 32px;
+            height: 18px;
+            border-radius: 20px;
+            background: #315052;
+            position: relative;
+            transition: .25s;
+        }
+
+        .toggle-track::after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            top: 2px;
+            left: 2px;
+            border-radius: 50%;
+            background: #ffffff;
+            transition: .25s;
+        }
+
+        body.light-theme {
+            background:
+                radial-gradient(circle at 90% 80%, rgba(0, 180, 220, 0.12), transparent 25%),
+                radial-gradient(circle at 10% 10%, rgba(0, 150, 140, 0.10), transparent 25%),
+                #eef6f6;
+            color: #102a2b;
+        }
+
+        body.light-theme .app {
+            background: rgba(248,252,252,0.94);
+            border-color: rgba(0,80,80,0.10);
+            box-shadow: 0 20px 60px rgba(0,50,50,0.12);
+        }
+
+        body.light-theme .sidebar {
+            background: linear-gradient(180deg, #e2f5f3, #d8eeee);
+            border-right-color: rgba(0,80,80,0.08);
+        }
+
+        body.light-theme .brand h2,
+        body.light-theme .account-name {
+            color: #102a2b;
+        }
+
+        body.light-theme .brand p,
+        body.light-theme .safety-card p,
+        body.light-theme .topics-title,
+        body.light-theme .account-email {
+            color: #607a7b;
+        }
+
+        body.light-theme .safety-card,
+        body.light-theme .account-panel {
+            background: rgba(255,255,255,0.55);
+            border-color: rgba(0,80,80,0.10);
+        }
+
+        body.light-theme .topic {
+            color: #244546;
+            background: rgba(255,255,255,0.42);
+        }
+
+        body.light-theme .chat-section {
+            background: #f3f9f9;
+        }
+
+        body.light-theme .chat-header {
+            border-bottom-color: rgba(0,70,70,0.08);
+        }
+
+        body.light-theme .status {
+            background: rgba(0,140,145,0.09);
+            color: #507071;
+        }
+
+        body.light-theme .bot-message {
+            background: #ffffff;
+            color: #244546;
+            box-shadow: 0 8px 20px rgba(0,60,60,0.08);
+        }
+
+        body.light-theme .source {
+            background: rgba(0,150,145,0.08);
+            color: #547576;
+        }
+
+        body.light-theme .input-area {
+            background: rgba(235,245,245,0.96);
+            border-top-color: rgba(0,70,70,0.08);
+        }
+
+        body.light-theme .input-wrapper {
+            background: #ffffff;
+            border-color: rgba(0,80,80,0.14);
+        }
+
+        body.light-theme #userInput {
+            color: #173334;
+        }
+
+        body.light-theme #userInput::placeholder {
+            color: #7b9293;
+        }
+
+        body.light-theme .input-hint {
+            color: #728889;
+        }
+
+        body.light-theme .welcome p {
+            color: #607879;
+        }
+
+        body.light-theme .account-btn {
+            color: #315455;
+            background: rgba(255,255,255,0.65);
+            border-color: rgba(0,80,80,0.10);
+        }
+
+        body.light-theme .toggle-track {
+            background: #0da9a6;
+        }
+
+        body.light-theme .toggle-track::after {
+            left: 16px;
+        }
+
+        /* Top-right account button for smaller screens */
+        .mobile-account {
+            display: none;
+            position: absolute;
+            right: 15px;
+            top: 13px;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: rgba(0,160,175,0.15);
+            color: white;
+            font-size: 17px;
+        }
+
+        .account-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 25px;
+            transform: translateX(-50%) translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            padding: 11px 16px;
+            border-radius: 12px;
+            background: rgba(4,25,27,0.94);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            font-size: 12px;
+            transition: .25s;
+        }
+
+        .account-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 850px) {
+            .mobile-account {
+                display: block;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            body.light-theme .mobile-account {
+                color: #173334;
+                background: rgba(0,150,160,0.12);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🩺
+            </div>
+
+            <div>
+                <h2>HealthCare AI</h2>
+                <p>Smart Health Assistant</p>
+            </div>
+
+        </div>
+
+
+        <div class="safety-card">
+
+            <div class="safety-title">
+                🛡️ Safety First
+            </div>
+
+            <p>
+                General health information only.
+                This chatbot is not a replacement
+                for professional medical care.
+            </p>
+
+        </div>
+
+
+        <div class="topics-title">
+            QUICK HEALTH TOPICS
+        </div>
+
+        <div class="topic" onclick="quickQuestion('What are common symptoms of fever?')">
+            🌡️ Fever symptoms
+        </div>
+
+        <div class="topic" onclick="quickQuestion('Why is drinking enough water important?')">
+            💧 Hydration
+        </div>
+
+        <div class="topic" onclick="quickQuestion('What are some healthy food habits?')">
+            🥗 Healthy food
+        </div>
+
+        <div class="topic" onclick="quickQuestion('What are the benefits of regular exercise?')">
+            🏃 Exercise
+        </div>
+
+        <div class="topic" onclick="quickQuestion('What are common causes of headache?')">
+            🤕 Headache
+        </div>
+
+    
+        <!-- =========================
+             ACCOUNT
+        ========================= -->
+
+        <div class="account-panel">
+
+            <div class="account-main">
+                <div class="account-avatar">👤</div>
+
+                <div class="account-info">
+                    <div class="account-name">
+                        {{ user_name if user_name else "User" }}
+                    </div>
+
+                    <div class="account-email">
+                        {{ user_email if user_email else "Login account" }}
+                    </div>
+
+                    <span class="account-label">LOGIN ID</span>
+                </div>
+            </div>
+
+            <div class="account-actions">
+
+                <button
+                    class="account-btn theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Change theme"
+                >
+                    <span>🌙 Theme</span>
+                    <span class="toggle-track" id="themeTrack"></span>
+                </button>
+
+                <button
+                    class="account-btn logout-btn"
+                    onclick="logoutUser()"
+                    title="Logout"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CHAT
+    ========================= -->
+
+    <main class="chat-section">
+
+        <header class="chat-header">
+
+            <div class="status">
+                <span class="status-dot"></span>
+                ✨ AI Assistant
+            </div>
+
+        
+            <button
+                class="mobile-account"
+                onclick="showAccountMenu()"
+                title="Account"
+            >
+                👤
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             MESSAGES
+        ========================= -->
+
+        <div class="messages" id="messages">
+
+            <div class="welcome" id="welcome">
+
+                <div class="welcome-icon">
+                    🩺
+                </div>
+
+                <h1>
+                    Hello! 👋
+                </h1>
+
+                <p>
+                    Ask me a general healthcare question.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             INPUT
+        ========================= -->
+
+        <div class="input-area">
+
+            <div class="input-wrapper">
+
+                <input
+                    type="text"
+                    id="userInput"
+                    placeholder="Ask your health question..."
+                    autocomplete="off"
+                >
+
+                <button
+                    id="sendButton"
+                    onclick="sendMessage()"
+                    title="Send"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+            <div class="input-hint">
+                Press Enter to send • General health information only
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<div class="account-toast" id="accountToast"></div>
+
+    <script>
+
+    const input = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendButton");
+    const messages = document.getElementById("messages");
+
+
+    /* =========================
+       ENTER KEY
+    ========================= */
+
+    input.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    });
+
+
+    /* =========================
+       QUICK QUESTION
+    ========================= */
+
+    function quickQuestion(question) {
+
+        input.value = question;
+
+        sendMessage();
+
+    }
+
+
+    /* =========================
+       ADD USER MESSAGE
+    ========================= */
+
+    function addUserMessage(text) {
+
+        const welcome = document.getElementById("welcome");
+
+        if (welcome) {
+            welcome.remove();
+        }
+
+        const row = document.createElement("div");
+
+        row.className = "message-row user";
+
+        row.innerHTML = `
+            <div class="user-message">
+                ${escapeHTML(text)}
+            </div>
+        `;
+
+        messages.appendChild(row);
+
+        scrollToBottom();
+    }
+
+
+    /* =========================
+       ADD BOT MESSAGE
+    ========================= */
+
+    function addBotMessage(text, source = "Groq AI") {
+
+        const row = document.createElement("div");
+
+        row.className = "message-row bot";
+
+        row.innerHTML = `
+
+            <div class="bot-avatar">
+                🤖
+            </div>
+
+            <div class="bot-content">
+
+                <div class="bot-message">
+                    ${formatAnswer(text)}
+                </div>
+
+                <div class="source">
+
+                    ✨ ${escapeHTML(source)}
+
+                    <button
+                        onclick="speakText(this)"
+                        title="Read answer"
+                    >
+                        🔊
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        messages.appendChild(row);
+
+        scrollToBottom();
+
+    }
+
+
+    /* =========================
+       TYPING MESSAGE
+    ========================= */
+
+    function addTyping() {
+
+        const row = document.createElement("div");
+
+        row.className = "message-row bot";
+
+        row.id = "typingMessage";
+
+        row.innerHTML = `
+
+            <div class="bot-avatar">
+                🤖
+            </div>
+
+            <div class="bot-content">
+
+                <div class="bot-message">
+
+                    <div class="typing">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+        messages.appendChild(row);
+
+        scrollToBottom();
+
+    }
+
+
+    /* =========================
+       REMOVE TYPING
+    ========================= */
+
+    function removeTyping() {
+
+        const typing = document.getElementById("typingMessage");
+
+        if (typing) {
+            typing.remove();
+        }
+
+    }
+
+
+    /* =========================
+       SEND MESSAGE
+    ========================= */
+
+    async function sendMessage() {
+
+        const question = input.value.trim();
+
+        if (!question) {
+            return;
+        }
+
+
+        addUserMessage(question);
+
+        input.value = "";
+
+        sendButton.disabled = true;
+
+        addTyping();
+
+
+        try {
+
+            const response = await fetch("/chat", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: question
+                })
+
+            });
+
+
+            const data = await response.json();
+
+            removeTyping();
+
+
+            if (response.ok) {
+
+                const answer =
+                    data.response ||
+                    data.answer ||
+                    data.message ||
+                    "Sorry, I could not generate an answer.";
+
+                const source =
+                    data.source ||
+                    "Groq AI";
+
+                addBotMessage(answer, source);
+
+            }
+
+            else {
+
+                addBotMessage(
+                    data.error ||
+                    "Sorry, I am unable to answer right now.",
+                    "System"
+                );
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error("Chat error:", error);
+
+            removeTyping();
+
+            addBotMessage(
+                "Sorry, I am unable to connect to the healthcare assistant right now. Please try again.",
+                "System"
+            );
+
+        }
+
+
+        sendButton.disabled = false;
+
+        input.focus();
+
+    }
+
+
+    /* =========================
+       FORMAT ANSWER
+    ========================= */
+
+    function formatAnswer(text) {
+
+        let safe = escapeHTML(String(text));
+
+        // Bold
+        safe = safe.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+        // New lines
+        safe = safe.replace(/\n/g, "<br>");
+
+        return safe;
+
+    }
+
+
+    /* =========================
+       HTML ESCAPE
+    ========================= */
+
+    function escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =========================
+       AUTO SCROLL
+    ========================= */
+
+    function scrollToBottom() {
+
+        setTimeout(() => {
+
+            messages.scrollTo({
+                top: messages.scrollHeight,
+                behavior: "smooth"
+            });
+
+        }, 50);
+
+    }
+
+
+    /* =========================
+       TEXT TO SPEECH
+    ========================= */
+
+    function speakText(button) {
+
+        const message =
+            button
+            .closest(".bot-content")
+            .querySelector(".bot-message")
+            .innerText;
+
+        if ("speechSynthesis" in window) {
+
+            window.speechSynthesis.cancel();
+
+            const speech =
+                new SpeechSynthesisUtterance(message);
+
+            speech.rate = 0.9;
+
+            speech.pitch = 1;
+
+            window.speechSynthesis.speak(speech);
+
+        }
+
+    }
+
+
+
+    /* =========================
+       THEME
+    ========================= */
+
+    function applySavedTheme() {
+
+        const savedTheme = localStorage.getItem("healthcare_theme");
+
+        if (savedTheme === "light") {
+            document.body.classList.add("light-theme");
+        } else {
+            document.body.classList.remove("light-theme");
+        }
+
+    }
+
+
+    function toggleTheme() {
+
+        document.body.classList.toggle("light-theme");
+
+        const isLight =
+            document.body.classList.contains("light-theme");
+
+        localStorage.setItem(
+            "healthcare_theme",
+            isLight ? "light" : "dark"
+        );
+
+        showToast(
+            isLight
+                ? "☀️ Light theme enabled"
+                : "🌙 Dark theme enabled"
+        );
+    }
+
+
+    /* =========================
+       ACCOUNT
+    ========================= */
+
+    function showAccountMenu() {
+
+        const name =
+            "{{ user_name|e }}" || "User";
+
+        const email =
+            "{{ user_email|e }}" || "Login account";
+
+        showToast(
+            "👤 " + name + " • " + email
+        );
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    async function logoutUser() {
+
+        const confirmed = confirm(
+            "Are you sure you want to logout?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            /*
+             * Flask /logout clears the server session
+             * and redirects to /login.
+             */
+            window.location.href = "/logout";
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+            showToast(
+                "Logout failed. Please try again."
+            );
+
+        }
+
+    }
+
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    function showToast(message) {
+
+        const toast =
+            document.getElementById("accountToast");
+
+        if (!toast) {
+            return;
+        }
+
+        toast.textContent = message;
+
+        toast.classList.add("show");
+
+        clearTimeout(
+            window.accountToastTimer
+        );
+
+        window.accountToastTimer =
+            setTimeout(() => {
+
+                toast.classList.remove("show");
+
+            }, 2200);
+
+    }
+
+
+    /* =========================
+       APPLY THEME ON LOAD
+    ========================= */
+
+    applySavedTheme();
+
+
+    /* =========================
+       INITIAL FOCUS
+    ========================= */
+
+    window.addEventListener("load", function() {
+
+        input.focus();
+
+    });
+
+</script>
+
+</body>
+
+</html>
+
+

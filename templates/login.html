@@ -1,0 +1,1048 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | {{ domain }} AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        :root {
+            --primary: #19d3c5;
+            --primary-dark: #0b9189;
+            --secondary: #6c63ff;
+            --bg: #041513;
+            --card: rgba(255,255,255,0.075);
+            --border: rgba(255,255,255,0.13);
+            --text: #f5ffff;
+            --muted: #91aaa7;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+
+            background:
+                radial-gradient(circle at 10% 20%, rgba(25,211,197,.20), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(108,99,255,.18), transparent 30%),
+                radial-gradient(circle at 80% 10%, rgba(25,211,197,.10), transparent 25%),
+                var(--bg);
+        }
+
+        /* ==============================
+           ANIMATED BACKGROUND
+        ============================== */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: .25;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb.one {
+            width: 280px;
+            height: 280px;
+            background: #14b8a6;
+            top: -100px;
+            left: -80px;
+        }
+
+        .orb.two {
+            width: 220px;
+            height: 220px;
+            background: #6c63ff;
+            right: -70px;
+            bottom: -70px;
+            animation-delay: 2s;
+        }
+
+        .orb.three {
+            width: 120px;
+            height: 120px;
+            background: #19d3c5;
+            top: 20%;
+            right: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%,100% {
+                transform: translate(0,0);
+            }
+
+            50% {
+                transform: translate(25px,-25px);
+            }
+        }
+
+        /* ==============================
+           FLOATING MEDICAL ICONS
+        ============================== */
+
+        .medical-icon {
+            position: absolute;
+            color: rgba(255,255,255,.08);
+            font-size: 40px;
+            animation: iconFloat 7s ease-in-out infinite;
+        }
+
+        .icon1 {
+            top: 12%;
+            left: 15%;
+        }
+
+        .icon2 {
+            bottom: 18%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .icon3 {
+            top: 18%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .icon4 {
+            bottom: 12%;
+            right: 17%;
+            animation-delay: 1s;
+        }
+
+        @keyframes iconFloat {
+            0%,100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(8deg);
+            }
+        }
+
+        /* ==============================
+           MAIN CARD
+        ============================== */
+
+        .login-wrapper {
+            width: 440px;
+            max-width: 92%;
+            position: relative;
+            z-index: 5;
+
+            padding: 42px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.105),
+                    rgba(255,255,255,.045)
+                );
+
+            border: 1px solid var(--border);
+            border-radius: 30px;
+
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.45),
+                inset 0 1px 0 rgba(255,255,255,.08);
+
+            animation: cardAppear .8s cubic-bezier(.2,.8,.2,1);
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ==============================
+           LOGO
+        ============================== */
+
+        .logo-container {
+            width: 86px;
+            height: 86px;
+            margin: auto;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 26px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #19d3c5,
+                    #0b9189
+                );
+
+            box-shadow:
+                0 15px 40px rgba(25,211,197,.30),
+                inset 0 1px 0 rgba(255,255,255,.4);
+
+            position: relative;
+
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        .logo-container::after {
+            content: "";
+            position: absolute;
+            inset: -7px;
+            border-radius: 31px;
+            border: 1px solid rgba(25,211,197,.25);
+            animation: pulseRing 2.5s infinite;
+        }
+
+        .logo {
+            font-size: 43px;
+        }
+
+        @keyframes logoPulse {
+            0%,100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(.9);
+                opacity: .8;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* ==============================
+           HEADING
+        ============================== */
+
+        h1 {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 30px;
+            letter-spacing: -.5px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #6ff7ed
+            );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 9px;
+            line-height: 1.6;
+        }
+
+        /* ==============================
+           SECURITY BADGE
+        ============================== */
+
+        .secure-badge {
+            width: fit-content;
+            margin: 22px auto 27px;
+
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 7px 13px;
+
+            border-radius: 30px;
+
+            background: rgba(25,211,197,.08);
+            border: 1px solid rgba(25,211,197,.15);
+
+            color: #8cebe4;
+            font-size: 12px;
+        }
+
+        .secure-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #19d3c5;
+            box-shadow: 0 0 10px #19d3c5;
+        }
+
+        /* ==============================
+           INPUTS
+        ============================== */
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+
+            color: #d8eeee;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            font-size: 17px;
+            opacity: .65;
+        }
+
+        input {
+            width: 100%;
+            height: 53px;
+
+            padding: 0 45px;
+
+            border: 1px solid rgba(255,255,255,.11);
+            border-radius: 14px;
+
+            outline: none;
+
+            background: rgba(0,0,0,.20);
+
+            color: white;
+            font-size: 14px;
+
+            transition: all .3s ease;
+        }
+
+        input:hover {
+            border-color: rgba(25,211,197,.3);
+        }
+
+        input:focus {
+            border-color: #19d3c5;
+
+            background: rgba(25,211,197,.045);
+
+            box-shadow:
+                0 0 0 4px rgba(25,211,197,.08),
+                0 8px 25px rgba(0,0,0,.15);
+        }
+
+        input::placeholder {
+            color: #66817e;
+        }
+
+        /* ==============================
+           PASSWORD TOGGLE
+        ============================== */
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            border: none;
+            background: none;
+
+            color: #789995;
+
+            cursor: pointer;
+
+            font-size: 17px;
+            width: auto;
+            padding: 4px;
+
+            margin: 0;
+        }
+
+        .password-toggle:hover {
+            transform: translateY(-50%);
+            box-shadow: none;
+            color: #19d3c5;
+        }
+
+        /* ==============================
+           OPTIONS
+        ============================== */
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin: 2px 0 20px;
+
+            font-size: 12px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #8da9a5;
+        }
+
+        .remember input {
+            width: 14px;
+            height: 14px;
+            padding: 0;
+            accent-color: #19d3c5;
+            box-shadow: none;
+        }
+
+        .forgot {
+            color: #55ded3;
+            text-decoration: none;
+        }
+
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
+        /* ==============================
+           LOGIN BUTTON
+        ============================== */
+
+        .login-btn {
+            width: 100%;
+            height: 54px;
+
+            border: none;
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #19d3c5,
+                    #0b9189
+                );
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            position: relative;
+            overflow: hidden;
+
+            transition: all .3s ease;
+
+            box-shadow:
+                0 12px 30px rgba(25,211,197,.20);
+        }
+
+        .login-btn::before {
+            content: "";
+            position: absolute;
+
+            top: 0;
+            left: -100%;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,.25),
+                    transparent
+                );
+
+            transition: .6s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 16px 35px rgba(25,211,197,.30);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==============================
+           LOADER
+        ============================== */
+
+        .loader {
+            width: 18px;
+            height: 18px;
+
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: white;
+
+            border-radius: 50%;
+
+            display: inline-block;
+
+            animation: spin .7s linear infinite;
+
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==============================
+           MESSAGE
+        ============================== */
+
+        .message {
+            min-height: 20px;
+
+            margin-top: 15px;
+
+            text-align: center;
+
+            font-size: 13px;
+            font-weight: 500;
+
+            transition: .3s;
+        }
+
+        .success {
+            color: #62e9dc;
+        }
+
+        .error {
+            color: #ff8585;
+        }
+
+        /* ==============================
+           REGISTER
+        ============================== */
+
+        .register {
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #849e9b;
+            font-size: 13px;
+        }
+
+        .register a {
+            color: #42ddd2;
+
+            text-decoration: none;
+            font-weight: 700;
+
+            margin-left: 4px;
+        }
+
+        .register a:hover {
+            text-decoration: underline;
+        }
+
+        /* ==============================
+           BRAND
+        ============================== */
+
+        .brand {
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #52736f;
+
+            font-size: 11px;
+            letter-spacing: .5px;
+        }
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 600px) {
+
+            body {
+                overflow: auto;
+                padding: 20px 0;
+            }
+
+            .login-wrapper {
+                padding: 32px 24px;
+                border-radius: 25px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .medical-icon {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+
+    <div class="background">
+
+        <div class="orb one"></div>
+        <div class="orb two"></div>
+        <div class="orb three"></div>
+
+        <div class="medical-icon icon1">✚</div>
+        <div class="medical-icon icon2">⚕</div>
+        <div class="medical-icon icon3">♡</div>
+        <div class="medical-icon icon4">✚</div>
+
+    </div>
+
+
+    <!-- LOGIN CARD -->
+
+    <div class="login-wrapper">
+
+        <!-- Logo -->
+
+        <div class="logo-container">
+            <div class="logo">⚕️</div>
+        </div>
+
+
+        <!-- Heading -->
+
+        <h1>
+            <span class="gradient-text">
+                Welcome Back
+            </span>
+        </h1>
+
+        <p class="subtitle">
+            Sign in to continue your journey with
+            <strong>{{ domain }} AI</strong>
+        </p>
+
+
+        <!-- Security -->
+
+        <div class="secure-badge">
+            <span class="secure-dot"></span>
+            Secure Healthcare AI Access
+        </div>
+
+
+        <!-- Login Form -->
+
+        <form id="loginForm">
+
+            <!-- Email -->
+
+            <div class="input-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="togglePassword"
+                        aria-label="Show password"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Options -->
+
+            <div class="options">
+
+                <label class="remember">
+
+                    <input
+                        type="checkbox"
+                        id="remember"
+                    >
+
+                    Remember me
+
+                </label>
+
+                <a href="#" class="forgot">
+                    Forgot password?
+                </a>
+
+            </div>
+
+
+            <!-- Login -->
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="loginBtn"
+            >
+                <span id="buttonText">
+                    Login to Healthcare AI
+                </span>
+            </button>
+
+        </form>
+
+
+        <!-- Message -->
+
+        <div
+            class="message"
+            id="message"
+        ></div>
+
+
+        <!-- Register -->
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="/register">
+                Create Account
+            </a>
+
+        </div>
+
+
+        <!-- Brand -->
+
+        <div class="brand">
+            ✦ {{ domain }} AI Assistant
+            &nbsp;•&nbsp;
+            Intelligent Healthcare Support
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const form =
+            document.getElementById("loginForm");
+
+        const button =
+            document.getElementById("loginBtn");
+
+        const buttonText =
+            document.getElementById("buttonText");
+
+        const message =
+            document.getElementById("message");
+
+        const password =
+            document.getElementById("password");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+
+        /* ==============================
+           PASSWORD SHOW / HIDE
+        ============================== */
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+                if (password.type === "password") {
+
+                    password.type = "text";
+
+                    togglePassword.textContent = "🙈";
+
+                    togglePassword.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    password.type = "password";
+
+                    togglePassword.textContent = "👁";
+
+                    togglePassword.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* ==============================
+           LOGIN
+        ============================== */
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const email =
+                    document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+
+                const passwordValue =
+                    password.value;
+
+
+                message.textContent = "";
+
+                message.className = "message";
+
+
+                button.disabled = true;
+
+
+                buttonText.innerHTML =
+                    '<span class="loader"></span>Signing in...';
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/login",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    email: email,
+                                    password: passwordValue
+                                })
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (result.success) {
+
+                        message.textContent =
+                            "✓ Login successful! Redirecting...";
+
+                        message.classList.add(
+                            "success"
+                        );
+
+
+                        buttonText.textContent =
+                            "✓ Login Successful";
+
+
+                        setTimeout(
+                            function () {
+
+                                window.location.href =
+                                    "/";
+
+                            },
+                            700
+                        );
+
+
+                    } else {
+
+                        message.textContent =
+                            result.message ||
+                            "Invalid email or password.";
+
+                        message.classList.add(
+                            "error"
+                        );
+
+
+                        button.disabled = false;
+
+                        buttonText.textContent =
+                            "Login to Healthcare AI";
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(error);
+
+
+                    message.textContent =
+                        "Unable to connect to server. Please try again.";
+
+                    message.classList.add(
+                        "error"
+                    );
+
+
+                    button.disabled = false;
+
+                    buttonText.textContent =
+                        "Login to Healthcare AI";
+
+                }
+
+            }
+        );
+
+
+        /* ==============================
+           ENTER KEY EXPERIENCE
+        ============================== */
+
+        document
+            .getElementById("email")
+            .addEventListener(
+                "input",
+                function () {
+
+                    message.textContent = "";
+
+                }
+            );
+
+
+        password.addEventListener(
+            "input",
+            function () {
+
+                message.textContent = "";
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
+
